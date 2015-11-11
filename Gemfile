@@ -33,6 +33,9 @@ gem 'spring',        group: :development
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
 
+# for enum
+gem 'classy_enum', '~> 4.0.0'
+
 # Use unicorn as the app server
 # gem 'unicorn'
 
@@ -47,3 +50,6 @@ gem 'factory_girl_rails'
 
 #rest api
 gem 'grape'
+
+# Use OGM instead of ActiveRecord
+gem "neo4j", "4.1.5"
