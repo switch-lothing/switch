@@ -49,7 +49,12 @@ gem "rspec-rails"
 gem 'factory_girl_rails'
 
 #rest api
-gem 'grape'
+gem 'grape', '~> 0.11.0'
+gem 'grape-entity', '~> 0.4.4'
+gem 'grape-jbuilder', '~> 0.2.0'
 
 # Use OGM instead of ActiveRecord
 gem "neo4j", "4.1.5"
+
+#for database clean
+gem 'database_cleaner'

@@ -16,7 +16,9 @@ module Switch
   ENV['NEO4J_URL'] || raise('no NEO4J_URL provided')
 
   class Application < Rails::Application
-    config.autoload_paths += %W(#{config.root}/app/enums)
+    config.autoload_paths.push(*%W(#{config.root}/lib
+                                  #{config.root}/enums)
+    )
 
     # load config
     switch_config_file = Rails.root.join('config', 'switch.yml')
