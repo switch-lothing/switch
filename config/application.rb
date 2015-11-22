@@ -35,6 +35,10 @@ module Switch
       config.neo4j.session_options = { basic_auth: { username: 'neo4j', password: 'switch!2'} }
     end
 
+    # jbuilder root path setting
+    config.middleware.use(Rack::Config) do |env|
+      env['api.tilt.root'] = Rails.root.join 'app', 'views'
+    end
     #config.autoload_paths += %W(#{config.root}/app/enums)
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
