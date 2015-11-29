@@ -49,6 +49,8 @@ module API
         requires :phone_number, type: String
       end
       post '/friend/add' do
+        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
+
         friend_phone_number = params[:phone_number]
         current_user_id = cookies[:user_id]
         current_user = Person.find_by(uuid: current_user_id)
@@ -56,6 +58,48 @@ module API
         current_user.make_friend_relation_using_phone_number(friend_phone_number)
       end
 
+      #get friends
+      params do
+
+      end
+      get '/friends', jbuilder:'/api/friends.json' do
+        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
+
+        current_user = Person.find_by(uuid: cookies[:user_id])
+        @friends = current_user.friends
+      end
+
+
+      #swich on/off
+      params do
+
+      end
+      put '/switch/on' do
+        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
+
+        current_user = Person.find_by(uuid: cookies[:user_id])
+        current_user.switch_status = SwitchStatus::On
+        if current_user.save
+          'switch on'
+        else
+          'fail'
+        end
+      end
+
+      params do
+
+      end
+      put '/switch/off' do
+        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
+
+        current_user = Person.find_by(uuid: cookies[:user_id])
+        current_user.switch_status = SwitchStatus::Off
+        if current_user.save
+          'switch off'
+        else
+          'fail'
+        end
+      end
     end
   end
 end
