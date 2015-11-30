@@ -19,13 +19,43 @@ class Person
 
   #validate
 
+  def self.make_in_query(phone_numbers_string)
+    in_query = ""
+    phone_numbers = phone_numbers_string.split(',')
+
+    phone_numbers.each do |phone_number|
+      phone_number = phone_number.strip
+      if in_query.eql? ""
+        in_query += "'#{phone_number}'"
+      else
+        in_query += ",'#{phone_number}'"
+      end
+    end
+    in_query
+  end
+
+  def self.find_by_phone_numbers(phone_numbers)
+    in_query = Person.make_in_query(phone_numbers)
+    Person.query_as(:person).match("person").where("person.phone_number IN [#{in_query}]").pluck(:person)
+  end
+
   def make_friend_relation_using_phone_number(friend_phone_number)
     friend = Person.find_by(phone_number: friend_phone_number)
 
-    if not friend.nil?
+    if (not friend.nil?) and (not self.friends.include? friend)
       DefRel.create(from_node: self, to_node:friend, relation: RelationStatus::Friend)
     else
 
     end
   end
+
+  def make_friends_relation_using_phone_numbers(phone_numbers)
+    friends = Person.find_by_phone_numbers(phone_numbers)
+    friends.each do |friend|
+      if not self.friends.include? friend
+        DefRel.create(from_node: self, to_node:friend, relation: RelationStatus::Friend)
+      end
+    end
+  end
+
 end

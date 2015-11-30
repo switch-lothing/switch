@@ -58,6 +58,28 @@ module API
         current_user.make_friend_relation_using_phone_number(friend_phone_number)
       end
 
+      params do
+        requires :phone_numbers, type: String
+      end
+      post '/friends/add' do
+        phone_numbers = params[:phone_numbers]
+
+        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
+        current_user = Person.find_by(uuid: cookies[:user_id])
+
+        current_user.make_friends_relation_using_phone_numbers(phone_numbers)
+        'success'
+      end
+
+      params do
+        requires :phone_numbers, type: String
+      end
+      post '/friends/candidate', jbuilder: '/api/candidate.json'do
+        phone_numbers = params[:phone_numbers]
+        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
+        @candidate = Person.find_by_phone_numbers(phone_numbers)
+      end
+
       #get friends
       params do
 
