@@ -1,9 +1,9 @@
 <%
 
 if ENV['RAILS_ENV'] =='production'
-  neo4j_url = ''
+  neo4j_url = 'http://localhost:7474'
 else
-  neo4j_url = 'http://localhost:7475'
+  neo4j_url = 'http://localhost:7474'
 end
 %>
 
@@ -19,4 +19,4 @@ development:
 test:
   <<: *base
   neo4j:
-    url: <% if ENV['CI'] %>'http://10.255.12.155:7476'<% else %>'http://localhost:7476'<% end %>
+    url: 'http://localhost:7475'
