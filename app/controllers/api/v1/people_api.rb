@@ -53,11 +53,15 @@ module API
       end
 
       params do
+        requires :auth_id, type: String
         requires :phone_numbers, type: String
       end
       post '/friends/candidate', jbuilder: '/api/candidate.json'do
         phone_numbers = params[:phone_numbers]
-        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
+        current_user_id = params[:auth_id]
+
+        current_user = Person.find_by(auth_id: current_user_id)
+        raise API::DoNotExistPersonError.new({message: 'this auth id do not exist', status: 404}) if current_user.nil?
         @candidate = Person.find_by_phone_numbers(phone_numbers)
       end
 

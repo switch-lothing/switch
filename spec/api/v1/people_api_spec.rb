@@ -72,5 +72,36 @@ describe API::V1::PeopleApi , :type => :request do
       expect(response).to have_http_status(404)
     end
   end
+
+  context 'POST api/v1/friends/candidate' do
+    candidate_params = {
+        auth_id: '0000',
+        phone_numbers: '000-000-0001,000-000-0002,000-000-0003,000-000-0004,000-000-0004'
+    }
+
+    do_not_exist_auth_id_param = {
+        auth_id: 'do not exist',
+        phone_numbers: '111-111-1111'
+    }
+
+    before do
+      Person.create(auth_id: '0000', nickname: 'me', phone_number: '000-000-0000')
+      Person.create(auth_id: '0001', nickname: 'friend1', phone_number: '000-000-0001')
+      Person.create(auth_id: '0002', nickname: 'friend2', phone_number: '000-000-0002')
+      Person.create(auth_id: '0003', nickname: 'friend3', phone_number: '000-000-0003')
+    end
+
+    it '존재하는 사람들의 목록을 확인할 수 있다' do
+      post 'api/v1/friends/candidate', candidate_params
+
+      result = JSON.parse(response.body)
+      expect(result.count).to eq(3)
+    end
+
+    it 'auth_id 가 존재하지 않을시 404에러를 발생한다' do
+      post 'api/v1/friends/candidate', do_not_exist_auth_id_param
+      expect(response).to have_http_status(404)
+    end
+  end
 end
 
