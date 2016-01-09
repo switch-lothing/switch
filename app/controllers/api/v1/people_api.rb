@@ -39,14 +39,15 @@ module API
       end
 
       params do
+        requires :auth_id, type: String
         requires :phone_numbers, type: String
       end
       post '/friends/add' do
         phone_numbers = params[:phone_numbers]
+        current_user_id = params[:auth_id]
 
-        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
-        current_user = Person.find_by(uuid: cookies[:user_id])
-
+        current_user = Person.find_by(auth_id: current_user_id)
+        raise API::DoNotExistPersonError.new({message: 'this auth id do not exist', status: 404}) if current_user.nil?
         current_user.make_friends_relation_using_phone_numbers(phone_numbers)
         'success'
       end
