@@ -15,10 +15,6 @@ describe API::V1::PeopleApi , :type => :request do
   end
 
   context 'POST api/v1/friend/add' do
-    login_param = {
-        auth_id: '0000'
-    }
-
     add_friend_param = {
         auth_id: '0000',
         phone_number: '111-111-1111'

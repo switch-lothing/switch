@@ -64,6 +64,20 @@ RSpec.describe Person, :type => :model do
     end
   end
 
+  context '전화번호 기반으로 사람 조회 시' do
+    before do
+      Person.create(auth_id: '0001', nickname: 'person1', phone_number: '000-000-0001')
+      Person.create(auth_id: '0002', nickname: 'person2', phone_number: '000-000-0002')
+      Person.create(auth_id: '0003', nickname: 'person3', phone_number: '000-000-0003')
+      Person.create(auth_id: '0004', nickname: 'person4', phone_number: '000-000-0004')
+    end
+
+    it 'find_by_phone_numbers함수는 전화번호를 받아서 존재하는 사람의 목록을 리턴한다' do
+      phone_numbers = '000-000-0001, 000-000-0002, 000-000-0003, 000-000-0004, 000-000-0005'
+      expect(Person.find_by_phone_numbers(phone_numbers).count).to eq(4)
+    end
+  end
+
   context '조회시' do
     it '나와 친구관계인 person 객체들을 가져올수 있다 ' do
       person = Person.create(nickname: 'me')
