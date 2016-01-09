@@ -24,37 +24,17 @@ module API
         Person.create(auth_id: auth_id, nickname: nickname, phone_number: phone_number)
       end
 
-      #login
-      params do
-        requires :auth_id, type: String
-      end
-      post '/login' do
-        auth_id = params[:auth_id]
-        raise API::AlreadyLogInError.new({message: 'already login', status: 400}) unless cookies[:user_id].nil?
-        @current_use = Person.find_by(auth_id: auth_id)
-
-        cookies[:user_id] = @current_use.id
-      end
-
-      #logout
-      params do
-      end
-      post '/logout' do
-        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
-        cookies.delete(:user_id)
-      end
-
       #add friend using phone number
       params do
+        requires :auth_id, type: String
         requires :phone_number, type: String
       end
       post '/friend/add' do
-        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
-
         friend_phone_number = params[:phone_number]
-        current_user_id = cookies[:user_id]
-        current_user = Person.find_by(uuid: current_user_id)
+        current_user_id = params[:auth_id]
+        current_user = Person.find_by(auth_id: current_user_id)
 
+        raise API::DoNotExistPersonError.new({message: 'this auth id do not exist', status: 404}) if current_user.nil?
         current_user.make_friend_relation_using_phone_number(friend_phone_number)
       end
 
