@@ -135,5 +135,41 @@ describe API::V1::PeopleApi , :type => :request do
       expect(response).to have_http_status(404)
     end
   end
+
+  context 'PUT api/v1/switch' do
+    request_params = {
+        auth_id: '0000'
+    }
+
+    do_not_exist_auth_id_param = {
+        auth_id: 'do not exist',
+    }
+
+    before do
+      Person.create(auth_id: '0000', nickname: 'test_nickname', phone_number: '000-000-0000')
+    end
+
+    it 'switch/on 요청시 auth_id가 존재하지 않으면 404에러를 발생한다' do
+      put 'api/v1/switch/on', do_not_exist_auth_id_param
+      expect(response).to have_http_status(404)
+    end
+
+    it 'switch/on 요청시 auth_id를 가진 사용자의 switch status를 on으로 저장한다' do
+      put 'api/v1/switch/on', request_params
+      person = Person.find_by(auth_id: '0000')
+      expect(person.switch_status).to eq('SwitchStatus::On')
+    end
+
+    it 'switch/off 요청시 auth_id가 존재하지 않으면 404에러를 발생한다' do
+      put 'api/v1/switch/off', do_not_exist_auth_id_param
+      expect(response).to have_http_status(404)
+    end
+
+    it 'switch/off 요청시 auth_id를 가진 사용자의 switch status를 on으로 저장한다' do
+      put 'api/v1/switch/off', request_params
+      person = Person.find_by(auth_id: '0000')
+      expect(person.switch_status).to eq('SwitchStatus::Off')
+    end
+  end
 end
 

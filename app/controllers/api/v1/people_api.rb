@@ -79,12 +79,13 @@ module API
 
       #swich on/off
       params do
-
+        requires :auth_id, type: String
       end
       put '/switch/on' do
-        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
+        current_user_id = params[:auth_id]
+        current_user = Person.find_by(auth_id: current_user_id)
+        raise API::DoNotExistPersonError.new({message: 'this auth id do not exist', status: 404}) if current_user.nil?
 
-        current_user = Person.find_by(uuid: cookies[:user_id])
         current_user.switch_status = SwitchStatus::On
         if current_user.save
           'switch on'
@@ -94,12 +95,13 @@ module API
       end
 
       params do
-
+        requires :auth_id, type: String
       end
       put '/switch/off' do
-        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
+        current_user_id = params[:auth_id]
+        current_user = Person.find_by(auth_id: current_user_id)
+        raise API::DoNotExistPersonError.new({message: 'this auth id do not exist', status: 404}) if current_user.nil?
 
-        current_user = Person.find_by(uuid: cookies[:user_id])
         current_user.switch_status = SwitchStatus::Off
         if current_user.save
           'switch off'
