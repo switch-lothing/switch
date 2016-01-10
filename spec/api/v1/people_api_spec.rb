@@ -14,6 +14,38 @@ describe API::V1::PeopleApi , :type => :request do
     end
   end
 
+  context 'GET api/v1/friends' do
+    request_param = {
+        auth_id: '0000'
+    }
+
+    do_not_exist_auth_id_param = {
+        auth_id: 'do not exist'
+    }
+
+    before do
+      me = Person.create(auth_id: '0000', nickname: 'me', phone_number: '000-000-0000')
+      friends_phone_numbers = ''
+      (1..3).each do |i|
+        Person.create(auth_id: "000#{i}", nickname: "friend#{i}", phone_number: "000-000-000#{i}")
+        friends_phone_numbers << "000-000-000#{i},"
+      end
+
+      me.make_friends_relation_using_phone_numbers(friends_phone_numbers)
+    end
+
+    it '친구의 목록을 불러올 수 있다.' do
+      get 'api/v1/friends', request_param
+      result = JSON.parse(response.body)
+      expect(result.count).to eq(3)
+    end
+
+    it 'auth_id가 존재하지 않을시 404에러를 발생한다' do
+      get 'api/v1/friends', do_not_exist_auth_id_param
+      expect(response).to have_http_status(404)
+    end
+  end
+
   context 'POST api/v1/friend/add' do
     add_friend_param = {
         auth_id: '0000',

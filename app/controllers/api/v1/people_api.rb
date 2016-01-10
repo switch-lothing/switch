@@ -67,12 +67,12 @@ module API
 
       #get friends
       params do
-
+        requires :auth_id, type: String
       end
       get '/friends', jbuilder:'/api/friends.json' do
-        raise API::NotLogInError.new({message: 'please login', status: 404}) if cookies[:user_id].nil?
-
-        current_user = Person.find_by(uuid: cookies[:user_id])
+        current_user_id = params[:auth_id]
+        current_user = Person.find_by(auth_id: current_user_id)
+        raise API::DoNotExistPersonError.new({message: 'this auth id do not exist', status: 404}) if current_user.nil?
         @friends = current_user.friends
       end
 
