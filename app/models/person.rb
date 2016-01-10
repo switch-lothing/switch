@@ -2,7 +2,7 @@ class Person
   include Neo4j::ActiveNode
   include ClassyEnum::ActiveRecord
 
-  property :auth_id, type: String
+  property :auth_id, type: String, constraint: :unique
   property :nickname, type: String
   property :phone_number, type: String
   property :switch_status, type: String, default: SwitchStatus::Off

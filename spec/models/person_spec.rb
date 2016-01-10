@@ -17,6 +17,13 @@ RSpec.describe Person, :type => :model do
 
       expect(person.friends.first).to eq(friend1)
     end
+
+    it 'auth_id중복시 에러를 발생한다' do
+      Person.create(auth_id: '0000')
+      expect{
+        Person.create(auth_id: '0000')
+      }.to raise_error(Neo4j::Server::CypherResponse::ResponseError)
+    end
   end
 
   context '친구 관계 생성시' do
