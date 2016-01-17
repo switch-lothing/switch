@@ -15,13 +15,20 @@ module API
         requires :auth_id, type: String
         requires :nickname, type: String
         requires :phone_number, type: String
+        requires :gcm_user_token, type: String
+        requires :profile_image, type: String
+        requires :thumbnail_image, type: String
       end
       post '/signup' do
         auth_id = params[:auth_id]
         nickname = params[:nickname]
         phone_number = params[:phone_number]
+        gcm_user_token = params[:gcm_user_token]
+        profile_image = params[:profile_image]
+        thumbnail_image = params[:thumbnail_image]
 
-        Person.create(auth_id: auth_id, nickname: nickname, phone_number: phone_number)
+        Person.create(auth_id: auth_id, nickname: nickname, phone_number: phone_number, gcm_user_token: gcm_user_token, profile_image: profile_image,
+        thumbnail_image: thumbnail_image)
       end
 
       #add friend using phone number

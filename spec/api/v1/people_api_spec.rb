@@ -5,12 +5,16 @@ describe API::V1::PeopleApi , :type => :request do
     create_param ={
         auth_id: '0000',
         nickname: 'test_nick',
-        phone_number: '000-000-0000'
+        phone_number: '000-000-0000',
+        gcm_user_token: 'gcm_token',
+        profile_image: 'profile_image_path',
+        thumbnail_image: 'thumnail_image_path'
     }
 
-    it '회원가입을 할 수 있다. - person객체가 추가된다. ' do
+    it 'person객체가 추가된다. ' do
       post 'api/v1/signup', create_param
       expect(Person.find_by(nickname: 'test_nick').nickname).to eq('test_nick')
+      expect(Person.find_by(nickname: 'test_nick').gcm_user_token).to eq('gcm_token')
     end
   end
 

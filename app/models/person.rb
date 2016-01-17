@@ -3,11 +3,15 @@ class Person
   include ClassyEnum::ActiveRecord
 
   property :auth_id, type: String, constraint: :unique
+  property :gcm_user_token, type: String
   property :nickname, type: String
   property :phone_number, type: String
   property :switch_status, type: String, default: SwitchStatus::Off
   property :location_x, type: Float
   property :location_y, type: Float
+
+  property :profile_image, type: String
+  property :thumbnail_image, type: String
 
   property :created_at
   property :updated_at
