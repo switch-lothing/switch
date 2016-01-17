@@ -31,6 +31,30 @@ module API
         thumbnail_image: thumbnail_image)
       end
 
+      #update user info
+      params do
+        requires :auth_id, type: String
+        requires :nickname, type: String
+        requires :phone_number, type: String
+        requires :gcm_user_token, type: String
+        requires :profile_image, type: String
+        requires :thumbnail_image, type: String
+      end
+      put '/user/edit' do
+        auth_id = params[:auth_id]
+        nickname = params[:nickname]
+        phone_number = params[:phone_number]
+        gcm_user_token = params[:gcm_user_token]
+        profile_image = params[:profile_image]
+        thumbnail_image = params[:thumbnail_image]
+
+        current_user = Person.find_by(auth_id: auth_id)
+        raise API::DoNotExistPersonError.new({message: 'this auth id do not exist', status: 404}) if current_user.nil?
+
+        current_user.update(auth_id: auth_id, nickname: nickname, phone_number: phone_number, gcm_user_token: gcm_user_token, profile_image: profile_image,
+                            thumbnail_image: thumbnail_image)
+      end
+
       #add friend using phone number
       params do
         requires :auth_id, type: String

@@ -2,7 +2,7 @@ require 'rails_helper'
 describe API::V1::PeopleApi , :type => :request do
   context 'POST api/v1/signup' do
 
-    create_param ={
+    create_param = {
         auth_id: '0000',
         nickname: 'test_nick',
         phone_number: '000-000-0000',
@@ -15,6 +15,56 @@ describe API::V1::PeopleApi , :type => :request do
       post 'api/v1/signup', create_param
       expect(Person.find_by(nickname: 'test_nick').nickname).to eq('test_nick')
       expect(Person.find_by(nickname: 'test_nick').gcm_user_token).to eq('gcm_token')
+    end
+  end
+
+  context 'PUT /api/v1/user/edit' do
+
+    create_param = {
+        auth_id: '0000',
+        nickname: 'test_nick',
+        phone_number: '000-000-0000',
+        gcm_user_token: 'gcm_token',
+        profile_image: 'profile_image_path',
+        thumbnail_image: 'thumnail_image_path'
+    }
+
+    change_param = {
+        auth_id: '0000',
+        nickname: 'change_nick',
+        phone_number: '000-000-0001',
+        gcm_user_token: 'gcm_token_change',
+        profile_image: 'profile_image_path_change',
+        thumbnail_image: 'thumnail_image_path_change'
+    }
+
+    do_not_exist_auth_id_params = {
+        auth_id: 'do_not_exist',
+        nickname: 'test_nick',
+        phone_number: '000-000-0000',
+        gcm_user_token: 'gcm_token',
+        profile_image: 'profile_image_path',
+        thumbnail_image: 'thumnail_image_path'
+    }
+    before do
+      Person.create(create_param)
+    end
+
+    it '회원의 정보를 수정할 수 있다.' do
+      user = Person.find_by(auth_id: '0000')
+      expect(user.nickname).to eq('test_nick')
+
+      put 'api/v1/user/edit', change_param
+      user = Person.find_by(auth_id: '0000')
+
+      expect(response).to have_http_status(200)
+      expect(user.nickname).to eq('change_nick')
+      expect(user.profile_image).to eq('profile_image_path_change')
+    end
+
+    it '회원이 존재하지 않으면 404에러를 발생한다.' do
+      put 'api/v1/user/edit', do_not_exist_auth_id_params
+      expect(response).to have_http_status(404)
     end
   end
 
